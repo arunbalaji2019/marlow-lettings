@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS listings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    city TEXT NOT NULL,
+    rent TEXT NOT NULL,
+    bedrooms INTEGER NOT NULL
+);
