@@ -1,13 +1,25 @@
 """Listings API and pages."""
+import base64
+import io
 import os
+import pickle
 
 from flask import Blueprint, abort, current_app, jsonify, request, send_file
 
 from .db import get_db, to_listing
 from .templating import listing_badge
-from vendor.floorplan import decode_floorplan
 
 bp = Blueprint("listings", __name__)
+
+
+class _DataOnlyUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        raise pickle.UnpicklingError(f"global '{module}.{name}' is not allowed")
+
+
+def decode_floorplan(blob):
+    """Decode a partner floorplan (base64 pickle) without importing or calling code."""
+    return _DataOnlyUnpickler(io.BytesIO(base64.b64decode(blob))).load()
 
 
 @bp.route("/api/listings")
@@ -58,5 +70,8 @@ def export(name):
 
 @bp.route("/api/floorplan", methods=["POST"])
 def floorplan():
-    plan = decode_floorplan(request.get_data())
+    try:
+        plan = decode_floorplan(request.get_data())
+    except pickle.UnpicklingError:
+        abort(400)
     return jsonify({"rooms": len(plan.get("rooms", []))})
