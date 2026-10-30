@@ -8,7 +8,7 @@ House rules for automated agents working in this repo. Based on CONTRIBUTING.md.
 - Never have more than 3 open bot or agent PRs. If 3 are open, don't open another; record the alert as queued.
 - One concern per PR. Keep it small.
 - CI must be green (`black --check .` and `pytest -q`) before asking for review.
-- Always do the record step, even when you stop early (step 7 of `.agents/skills/remediate-security-alert/SKILL.md`).
+- Always do the record step, even when you stop early (see "Record the outcome" in `.agents/skills/remediate-security-alert/SKILL.md`).
 
 ## Never
 
