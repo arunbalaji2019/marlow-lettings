@@ -4,7 +4,7 @@ House rules for automated agents working in this repo. Based on CONTRIBUTING.md.
 
 ## Pull requests
 
-- For PRs that fix a security alert: title starts with `[sec-auto]` and links the alert.
+- Every bot or agent PR's title starts with `[sec-auto]` and links the alert, advisory or issue it addresses.
 - Never have more than 3 open bot or agent PRs. If 3 are open, don't open another; record the alert as queued.
 - One concern per PR. Keep it small.
 - CI must be green (`black --check .` and `pytest -q`) before asking for review.
