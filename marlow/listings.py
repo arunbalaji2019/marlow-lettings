@@ -31,8 +31,14 @@ def get_listing(listing_id):
 @bp.route("/api/search")
 def search():
     q = request.args.get("q", "")
-    sql = f"SELECT * FROM listings WHERE title LIKE '%{q}%' ORDER BY id"
-    rows = get_db().execute(sql).fetchall()
+    rows = (
+        get_db()
+        .execute(
+            "SELECT * FROM listings WHERE title LIKE '%' || ? || '%' ORDER BY id",
+            (q,),
+        )
+        .fetchall()
+    )
     return jsonify([to_listing(r) for r in rows])
 
 
