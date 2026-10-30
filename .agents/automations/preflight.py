@@ -3,7 +3,7 @@
 Emits one item per open code-scanning alert and one per Dependabot package,
 up to the free [sec-auto] PR slots, skipping any item that already has an open
 "[sec-auto record] <id>" issue. An item's version is its sorted alert numbers
-plus ":<number of closed record issues for that id>". Local test mode: `python preflight.py --test`
+plus ":<latest closed_at of that id's closed record issues, or 0>". Local test mode: `python preflight.py --test`
 prints the items instead of writing $OUTPUT_FILE (still needs MARLOW_GH_READ).
 """
 import json
@@ -119,7 +119,7 @@ def dependabot_items():
 
 
 def record_issues():
-    """Return (ids with an open record issue, closed record count per id)."""
+    """Return (ids with an open record issue, latest record closed_at per id)."""
     open_ids, closed = set(), {}
     for issue in get_all("issues?state=all&per_page=100"):
         match = RECORD_TITLE.match(issue["title"])
@@ -129,7 +129,7 @@ def record_issues():
         if issue["state"] == "open":
             open_ids.add(item_id)
         else:
-            closed[item_id] = closed.get(item_id, 0) + 1
+            closed[item_id] = max(closed.get(item_id, ""), issue["closed_at"])
     return open_ids, closed
 
 
@@ -145,7 +145,7 @@ def build_items():
         if item["id"] in open_ids:
             continue
         # Closing a record bumps the version, so the item fires again.
-        item["version"] += f":{closed.get(item['id'], 0)}"
+        item["version"] += f":{closed.get(item['id'], '0')}"
         items.append(item)
     items.sort(key=lambda item: (SEVERITY_RANK[item["severity"]], item["id"]))
     return items[:slots]
