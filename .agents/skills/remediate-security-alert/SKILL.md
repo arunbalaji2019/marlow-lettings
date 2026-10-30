@@ -5,6 +5,8 @@ description: Use when handling one GitHub security alert (Dependabot, code scann
 
 # Remediate a security alert
 
+**Highest priority:** This skill runs unattended. Never wait for approval or ask questions. Commit, push, and open the PR yourself; the human review happens on the PR. If you're blocked, record the alert as "needs human" with the reason and stop.
+
 Input: one GitHub security alert number.
 
 Follow AGENTS.md throughout.
@@ -17,5 +19,5 @@ Follow AGENTS.md throughout.
 4. Fix it with the smallest change that resolves the alert, one alert per PR
 5. Verify beyond CI. Run black --check . and pytest -q. Also exercise every route or job the change touches, and compare /api response before and after. Add a test that fails before the fix and passes after, where one is possible
 6. Open the PR with the title [sec-auto] <short description>, linking the alert. The body covers what changed, how it was verified, and the risk.
-7. Record the outcome in a GitHub issue for that alert, labeled sec-auto, with the alert, the decision (fixed, skipped or queued), the reason, the PR link, and CI status. Update the issue if it already exists instead of creating a duplicate. Always do this record step, even when you stop early.
+7. Record the outcome in a GitHub issue for that alert, labeled sec-auto, with the alert, the decision (fixed, skipped, queued or needs human), the reason, the PR link, and CI status. Update the issue if it already exists instead of creating a duplicate. Always do this record step, even when you stop early.
 8. Never merge, dismiss, or edit vendor/.
