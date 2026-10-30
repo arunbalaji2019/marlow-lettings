@@ -18,8 +18,12 @@ Follow AGENTS.md throughout.
 
 1. Read the alerts through the GitHub API.
    - Package: find all its open Dependabot alerts in both manifests (`requirements.txt` and `requirements-dev.txt`; match the package name case-insensitively). For each one note the alert number, advisory, severity, manifest, vulnerable range and first patched version. The target is the lowest version that fixes all of them: the highest first patched version, checked against every vulnerable range.
+   - No patched version: if an advisory has no first patched version, leave it out of the target calculation. Fix the package's other alerts as normal, and record the unpatched one as "needs human" with the advisory link and "no patched version available".
    - Alert number: rule or advisory, severity, file and line, and the fix version if there is one.
-2. Package only: before starting, check whether an open [sec-auto] PR already covers this package. If one does, record it as "Covered by PR #N" and stop.
+2. Package only: before starting, check whether an open PR already covers this package. A PR counts as covering it only if its version is at or above the step 1 target, meaning it fixes every open alert for the package.
+   - If an open PR covers it, record it as "Covered by PR #N" and stop.
+   - If an open [sec-auto] PR touches the package but falls short of the target, update that PR's branch to the target and add the extra alert numbers to its body and record, instead of opening a new PR.
+   - If an open PR that isn't [sec-auto] touches the package but falls short of the target, record "needs human" and don't touch it.
 3. Check capacity. Count open PRs authored by any bot (Dependabot, scanners, agents) or titled [sec-auto]. If there are 3 or more, record the alert as queued.
 4. Triage before touching code. Decide whether to fix it or skip it with a written reason, for example: it's not reachable in production, it's dev-only, the fix would require editing vendor/, or there is no safe fix. If the fix touches migrations/, request Rafael on the PR and say why. Follow the repo's CONTRIBUTING.md rules and the AGENTS.md entries.
 5. Fix it with the smallest change that resolves it.
